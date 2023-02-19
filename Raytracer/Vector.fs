@@ -5,6 +5,8 @@ type vec3 =
       e1: float
       e2: float }
 
+    static member zero = { e0 = 0; e1 = 0; e2 = 0 }
+
     static member (+)(u, v) =
         { e0 = u.e0 + v.e0
           e1 = u.e1 + v.e1
@@ -16,8 +18,8 @@ type vec3 =
           e2 = t * v.e2 }
 
     static member (/)(v: vec3, t) = 1.0 / t * v
-    static member (~-) v = -1.0 * v
-    static member (-)(u, v) = u + -v
+    static member (~-)(v: vec3) = -1.0 * v
+    static member (-)(u: vec3, v: vec3) = u + -v
 
     static member (*)(u, v) =
         { e0 = u.e0 * v.e0
@@ -31,8 +33,6 @@ type vec3 =
 
     override v.ToString() = $"{v.e0} {v.e1} {v.e2}\n"
 
-// printing?
-let zero = { e0 = 0; e1 = 0; e2 = 0 }
 let len_squared v = v.e0 ** 2 + v.e1 ** 2 + v.e2 ** 2
 let len = len_squared >> sqrt
 let normalize v = 1.0 / (len v) * v
@@ -45,6 +45,16 @@ type color =
       g: float
       b: float }
 
+    static member (+)(u, v) =
+        { r = u.r + v.r
+          g = u.g + v.g
+          b = u.b + v.b }
+
+    static member (*)(t, c) =
+        { r = t * c.r
+          g = t * c.g
+          b = t * c.b }
+
     override c.ToString() =
         let normalize v = int <| 255.999 * v
-        $"%i{normalize c.r} %i{normalize c.g} %i{normalize c.b}\n"
+        $"%i{normalize c.r} %i{normalize c.g} %i{normalize c.b}"

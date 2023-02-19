@@ -7,7 +7,7 @@
 
     <ItemGroup>
         <Compile Include="Vector.fs" />
-        <Compile Include="Format.fs" />
+        <Compile Include="Ray.fs" />
         <Compile Include="Program.fs" />
     </ItemGroup>
 
