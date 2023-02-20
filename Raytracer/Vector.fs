@@ -37,6 +37,16 @@ let len = len_squared >> sqrt
 let normalize v = 1.0 / (len v) * v
 let norm2 v = v / (len v)
 
+// Passing in System.Random prevents calls to this function from being cached.
+// Without this, this function would only be called once for the life of the program.
+let random_on_unit_sphere (R: System.Random) =
+    Seq.initInfinite (fun _ ->
+        { e0 = 2.0 * R.NextDouble() - 1.0
+          e1 = 2.0 * R.NextDouble() - 1.0
+          e2 = 2.0 * R.NextDouble() - 1.0 })
+    |> Seq.find (fun v -> len_squared v <= 1)
+    |> normalize
+
 type point3 = vec3
 
 type color =
@@ -58,5 +68,9 @@ type color =
     static member Zero = { r = 0; g = 0; b = 0 }
 
     override c.ToString() =
-        let normalize v = int <| 255.999 * v
+        let clamp minimum maximum value = value |> max minimum |> min maximum
+
+        let normalize v =
+            int <| 255.999 * clamp 0.0 0.999 (sqrt v)
+
         $"%i{normalize c.r} %i{normalize c.g} %i{normalize c.b}"
