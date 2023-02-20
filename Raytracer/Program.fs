@@ -2,6 +2,7 @@
 open Raytracer.Ray
 open Raytracer.Sphere
 open Raytracer.Object
+open Raytracer.Camera
 
 let ray_color r world =
     match test_many r world 0 infinity with
@@ -21,6 +22,7 @@ let main _ =
     let aspect_ratio = 16.0 / 9.0
     let image_width = 400
     let image_height = int <| float image_width / aspect_ratio // 225
+    let samples_per_pixel = 100
 
     // World
     let sphere =
@@ -33,31 +35,22 @@ let main _ =
 
     let world: object list = [ sphere; sphere2 ]
 
-    // Camera
-    let viewport_height = 2.0
-    let viewport_width = aspect_ratio * viewport_height
-    let focal_length = 1.0
-
-    let origin = point3.zero
-    let horizontal = { vec3.zero with e0 = viewport_width }
-    let vertical = { vec3.zero with e1 = viewport_height }
-
-    let lower_left_corner =
-        origin
-        - horizontal / 2.0
-        - vertical / 2.0
-        - { vec3.zero with e2 = focal_length }
+    let R = System.Random()
 
     // Render
     let pixels =
         seq {
             for j in [ image_height - 1 .. -1 .. 0 ] do
+                eprintfn $"Lines remaining: {j}"
+
                 for i in [ 0 .. image_width - 1 ] do
-                    let u = float i / (float image_width - 1.0)
-                    let v = float j / (float image_height - 1.0)
-                    let dir = lower_left_corner + u * horizontal + v * vertical - origin
-                    let r = { origin = origin; direction = dir }
-                    yield ray_color r world
+                    [ 1..samples_per_pixel ]
+                    |> List.map (fun _ ->
+                        let u = (float i + R.NextDouble()) / (float image_width - 1.0)
+                        let v = (float j + R.NextDouble()) / (float image_height - 1.0)
+                        let r = ray_from_camera u v
+                        ray_color r world)
+                    |> List.average
         }
 
     printfn "P3"

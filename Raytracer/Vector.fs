@@ -54,6 +54,9 @@ type color =
           g = t * c.g
           b = t * c.b }
 
+    static member DivideByInt(c: color, q: int) = 1.0 / float q * c
+    static member Zero = { r = 0; g = 0; b = 0 }
+
     override c.ToString() =
         let normalize v = int <| 255.999 * v
         $"%i{normalize c.r} %i{normalize c.g} %i{normalize c.b}"
