@@ -4,7 +4,10 @@ open Raytracer.Object
 open Raytracer.Vector
 open Raytracer.Ray
 
-type sphere = {center:point3; radius:float} with
+type sphere =
+    { center: point3
+      radius: float }
+
     interface object with
         member s.test r t_min t_max =
             let oc = r.origin - s.center
@@ -13,8 +16,25 @@ type sphere = {center:point3; radius:float} with
             let c = len_squared oc - s.radius * s.radius
             let fourth_discriminant = half_b ** 2 - a * c
 
-            if fourth_discriminant > 0 then
-                // the value of t where the ray intersects the sphere
-                Some({t=(-half_b - sqrt fourth_discriminant) / a})
-            else
+            if fourth_discriminant < 0 then
                 None
+            else
+                // the value of t where the ray intersects the sphere
+                let t1 = (-half_b - sqrt fourth_discriminant) / a
+                let t2 = (-half_b + sqrt fourth_discriminant) / a
+
+                let hit_record t =
+                    let n = (r.at t - s.center) / s.radius
+                    let front_face = r.direction * n < 0
+                    let sign = if front_face then 1.0 else -1.0
+
+                    Some(
+                        { N = sign * n
+                          p = r.at t
+                          t = t
+                          front_face = front_face }
+                    )
+
+                if t1 > t_min && t1 < t_max then hit_record t1
+                else if t2 > t_min && t2 < t_max then hit_record t2
+                else None

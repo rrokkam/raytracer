@@ -23,12 +23,12 @@ type vec3 =
 
     static member (*)(u, v) = u.e0 * v.e0 + u.e1 * v.e1 + u.e2 * v.e2
 
-// temp, because this gives a warning for string concat using the name ^
-// which is a holdover from OCaml
-//    static member (^)(u, v) =
-//        { e0 = u.e1 * v.e2 - u.e2 * v.e1
-//          e1 = u.e2 * v.e0 - u.e0 * v.e2
-//          e2 = u.e0 * v.e1 - u.e1 * v.e0 }
+    // temp, because this gives a warning for string concat using the name ^
+    // which is a holdover from OCaml
+    //    static member (^)(u, v) =
+    //        { e0 = u.e1 * v.e2 - u.e2 * v.e1
+    //          e1 = u.e2 * v.e0 - u.e0 * v.e2
+    //          e2 = u.e0 * v.e1 - u.e1 * v.e0 }
 
     override v.ToString() = $"{v.e0} {v.e1} {v.e2}\n"
 

@@ -3,18 +3,13 @@ open Raytracer.Ray
 open Raytracer.Sphere
 open Raytracer.Object
 
-let ray_color r =
-    let center = { point3.zero with e2 = -1.0 }
-    let sphere = { center = center; radius = 0.5 }
-
-    match (sphere :> object).test r 0 0 with
-    | Some t ->
-        let N = normalize <| r.at t.t - center
-
+let ray_color r world =
+    match test_many r world 0 infinity with
+    | Some ix ->
         0.5
-        * { r = N.e0 + 1.0
-            g = N.e1 + 1.0
-            b = N.e2 + 1.0 }
+        * { r = ix.N.e0 + 1.0
+            g = ix.N.e1 + 1.0
+            b = ix.N.e2 + 1.0 }
     | None ->
         let direction = normalize r.direction
         let t = 0.5 * (direction.e1 + 1.0)
@@ -26,6 +21,17 @@ let main _ =
     let aspect_ratio = 16.0 / 9.0
     let image_width = 400
     let image_height = int <| float image_width / aspect_ratio // 225
+
+    // World
+    let sphere =
+        { center = { point3.zero with e2 = -1.0 }
+          radius = 0.5 }
+
+    let sphere2 =
+        { center = { e0 = 0.0; e1 = -100.5; e2 = -1.0 }
+          radius = 100 }
+
+    let world: object list = [ sphere; sphere2 ]
 
     // Camera
     let viewport_height = 2.0
@@ -51,7 +57,7 @@ let main _ =
                     let v = float j / (float image_height - 1.0)
                     let dir = lower_left_corner + u * horizontal + v * vertical - origin
                     let r = { origin = origin; direction = dir }
-                    yield ray_color r
+                    yield ray_color r world
         }
 
     printfn "P3"

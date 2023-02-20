@@ -7,4 +7,3 @@ type ray =
       direction: vec3 }
 
     member r.at(t) : point3 = r.origin + t * r.direction
-
