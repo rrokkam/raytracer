@@ -1,10 +1,27 @@
-﻿module PigLatin
-
-open Raytracer.Vector
+﻿open Raytracer.Vector
 open Raytracer.Ray
+open Raytracer.Sphere
+open Raytracer.Object
+
+let ray_color r =
+    let center = { point3.zero with e2 = -1.0 }
+    let sphere = { center = center; radius = 0.5 }
+
+    match (sphere :> object).test r 0 0 with
+    | Some t ->
+        let N = normalize <| r.at t.t - center
+
+        0.5
+        * { r = N.e0 + 1.0
+            g = N.e1 + 1.0
+            b = N.e2 + 1.0 }
+    | None ->
+        let direction = normalize r.direction
+        let t = 0.5 * (direction.e1 + 1.0)
+        (1.0 - t) * { r = 1.0; g = 1.0; b = 1.0 } + t * { r = 0.5; g = 0.7; b = 1.0 }
 
 [<EntryPoint>]
-let main args =
+let main _ =
     // Image
     let aspect_ratio = 16.0 / 9.0
     let image_width = 400
