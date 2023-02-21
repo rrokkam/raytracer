@@ -3,10 +3,12 @@ module Raytracer.Sphere
 open Raytracer.Object
 open Raytracer.Vector
 open Raytracer.Ray
+open Raytracer.Material
 
 type sphere =
     { center: point3
-      radius: float }
+      radius: float
+      material: material }
 
     interface object with
         member s.test r t_min t_max =
@@ -28,13 +30,14 @@ type sphere =
                     let front_face = r.direction * n < 0
                     let sign = if front_face then 1.0 else -1.0
 
-                    Some(
-                        { N = sign * n
-                          p = r.at t
-                          t = t
-                          front_face = front_face }
-                    )
+                    { N = sign * n
+                      p = r.at t
+                      t = t
+                      front_face = front_face }
 
-                if t1 > t_min && t1 < t_max then hit_record t1
-                else if t2 > t_min && t2 < t_max then hit_record t2
-                else None
+                if t1 > t_min && t1 < t_max then
+                    Some(hit_record t1, s.material)
+                else if t2 > t_min && t2 < t_max then
+                    Some(hit_record t2, s.material)
+                else
+                    None

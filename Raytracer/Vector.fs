@@ -37,15 +37,22 @@ let len = len_squared >> sqrt
 let normalize v = 1.0 / (len v) * v
 let norm2 v = v / (len v)
 
+let reflect (v: vec3) n : vec3 = v - 2.0 * v * n * n
+
+let NearZero v =
+    let s = 1e-8
+    v.e0 < s && v.e1 < s && v.e2 < s
+
 // Passing in System.Random prevents calls to this function from being cached.
 // Without this, this function would only be called once for the life of the program.
-let random_on_unit_sphere (R: System.Random) =
+let random_in_unit_sphere (R: System.Random) =
     Seq.initInfinite (fun _ ->
         { e0 = 2.0 * R.NextDouble() - 1.0
           e1 = 2.0 * R.NextDouble() - 1.0
           e2 = 2.0 * R.NextDouble() - 1.0 })
     |> Seq.find (fun v -> len_squared v <= 1)
-    |> normalize
+
+let random_on_unit_sphere R = normalize <| random_in_unit_sphere R
 
 type point3 = vec3
 
@@ -66,6 +73,7 @@ type color =
 
     static member DivideByInt(c: color, q: int) = 1.0 / float q * c
     static member Zero = { r = 0; g = 0; b = 0 }
+
 
     override c.ToString() =
         let clamp minimum maximum value = value |> max minimum |> min maximum

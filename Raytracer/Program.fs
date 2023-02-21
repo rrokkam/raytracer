@@ -3,18 +3,22 @@ open Raytracer.Ray
 open Raytracer.Sphere
 open Raytracer.Object
 open Raytracer.Camera
+open Raytracer.Material
 
 let R = System.Random()
 
 let rec ray_color r world max_bounces =
-    match (max_bounces, test_many r world 0.001 infinity) with
+    match max_bounces, test_many r world 0.001 infinity with
     | bounces, _ when bounces <= 0 -> color.Zero
-    | _, Some ix ->
-        let bounce =
-            { origin = ix.p
-              direction = ix.N + random_on_unit_sphere R }
+    | _, Some (ix, mat) ->
+        match mat.scatter r ix R with
+        | Some (attenuation, bounce) ->
+            let c = ray_color bounce world (max_bounces - 1)
 
-        0.5 * ray_color bounce world (max_bounces - 1)
+            { r = attenuation.r * c.r
+              g = attenuation.g * c.g
+              b = attenuation.b * c.b }
+        | None -> color.Zero
     | _, None ->
         let direction = normalize r.direction
         let t = 0.5 * (direction.e1 + 1.0)
@@ -30,15 +34,31 @@ let main _ =
     let max_bounces = 50
 
     // World
-    let sphere =
-        { center = { point3.zero with e2 = -1.0 }
-          radius = 0.5 }
-
-    let sphere2 =
+    let ground =
         { center = { e0 = 0.0; e1 = -100.5; e2 = -1.0 }
-          radius = 100 }
+          radius = 100
+          material = { albedo = { r = 0.8; g = 0.8; b = 0.0 } } }
 
-    let world: object list = [ sphere; sphere2 ]
+    let center =
+        { center = { point3.zero with e2 = -1.0 }
+          radius = 0.5
+          material = { albedo = { r = 0.7; g = 0.3; b = 0.3 } } }
+
+    let left =
+        { center = { e0 = -1.0; e1 = 0; e2 = -1.0 }
+          radius = 0.5
+          material =
+            { albedo = { r = 0.8; g = 0.8; b = 0.8 }
+              fuzz = 0.3 } }
+
+    let right =
+        { center = { e0 = 1.0; e1 = 0; e2 = -1.0 }
+          radius = 0.5
+          material =
+            { albedo = { r = 0.8; g = 0.6; b = 0.2 }
+              fuzz = 1.0 } }
+
+    let world: object list = [ ground; center; left; right ]
 
     // Render
     let pixels =
