@@ -23,12 +23,11 @@ type vec3 =
 
     static member (*)(u, v) = u.e0 * v.e0 + u.e1 * v.e1 + u.e2 * v.e2
 
-    // temp, because this gives a warning for string concat using the name ^
-    // which is a holdover from OCaml
-    //    static member (^)(u, v) =
-    //        { e0 = u.e1 * v.e2 - u.e2 * v.e1
-    //          e1 = u.e2 * v.e0 - u.e0 * v.e2
-    //          e2 = u.e0 * v.e1 - u.e1 * v.e0 }
+    // use double wedge because single wedge is taken by default
+    static member (^^)(u, v) =
+        { e0 = u.e1 * v.e2 - u.e2 * v.e1
+          e1 = u.e2 * v.e0 - u.e0 * v.e2
+          e2 = u.e0 * v.e1 - u.e1 * v.e0 }
 
     override v.ToString() = $"{v.e0} {v.e1} {v.e2}\n"
 
@@ -59,6 +58,13 @@ let random_in_unit_sphere (R: System.Random) =
     |> Seq.find (fun v -> len_squared v <= 1)
 
 let random_on_unit_sphere R = normalize <| random_in_unit_sphere R
+
+let random_in_unit_disk (R: System.Random) =
+    Seq.initInfinite (fun _ ->
+        { e0 = 2.0 * R.NextDouble() - 1.0
+          e1 = 2.0 * R.NextDouble() - 1.0
+          e2 = 0.0 })
+    |> Seq.find (fun v -> len_squared v <= 1)
 
 type point3 = vec3
 

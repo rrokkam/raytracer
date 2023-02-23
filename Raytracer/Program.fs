@@ -27,7 +27,6 @@ let rec ray_color r world max_bounces =
 [<EntryPoint>]
 let main _ =
     // Image
-    let aspect_ratio = 16.0 / 9.0
     let image_width = 400
     let image_height = int <| float image_width / aspect_ratio // 225
     let samples_per_pixel = 100
@@ -51,7 +50,7 @@ let main _ =
 
     let left_hollow =
         { center = { e0 = -1.0; e1 = 0; e2 = -1.0 }
-          radius = -0.4
+          radius = -0.45
           material = { eta = 1.5 } }
 
     let right =
@@ -74,7 +73,7 @@ let main _ =
                     |> List.map (fun _ ->
                         let u = (float i + R.NextDouble()) / (float image_width - 1.0)
                         let v = (float j + R.NextDouble()) / (float image_height - 1.0)
-                        let r = ray_from_camera u v
+                        let r = ray_from_camera u v R
                         ray_color r world max_bounces)
                     |> List.average
         }
