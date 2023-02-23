@@ -38,3 +38,28 @@ type metal =
             match reflected * ix.N > 0 with
             | true -> Some(s.albedo, scattered)
             | false -> None
+
+type dielectric =
+    { eta: float }
+
+    member s.reflectance cos_theta refraction_ratio =
+        let r0 = ((1.0 - refraction_ratio) / (1.0 + refraction_ratio)) ** 2.0
+        r0 + (1.0 - r0) * (1.0 - cos_theta) ** 5.0
+
+    interface material with
+        member s.scatter r ix R =
+            let unit_direction = normalize r.direction
+            let refraction_ratio = if ix.front_face then 1.0 / s.eta else s.eta
+            let cos_theta = min (-unit_direction * ix.N) 1.0
+            let sin_theta = sqrt <| 1.0 - cos_theta * cos_theta
+
+            let cannot_refract_by_snell = refraction_ratio * sin_theta > 1.0
+            let schlick_reflectance = s.reflectance cos_theta refraction_ratio
+
+            let direction =
+                if cannot_refract_by_snell || schlick_reflectance > R.NextDouble() then
+                    reflect unit_direction ix.N
+                else
+                    refract unit_direction ix.N refraction_ratio
+
+            Some({ r = 1.0; g = 1.0; b = 1.0 }, { origin = ix.p; direction = direction })

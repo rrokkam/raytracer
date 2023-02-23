@@ -39,6 +39,12 @@ let norm2 v = v / (len v)
 
 let reflect (v: vec3) n : vec3 = v - 2.0 * v * n * n
 
+let refract v (n: vec3) refraction_ratio =
+    let cos_theta = min (-v * n) 1.0
+    let r_perpendicular = refraction_ratio * (v + cos_theta * n)
+    let r_parallel = -(sqrt (abs 1.0 - len_squared r_perpendicular)) * n
+    r_perpendicular + r_parallel
+
 let NearZero v =
     let s = 1e-8
     v.e0 < s && v.e1 < s && v.e2 < s

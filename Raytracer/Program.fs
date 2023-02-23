@@ -42,23 +42,26 @@ let main _ =
     let center =
         { center = { point3.zero with e2 = -1.0 }
           radius = 0.5
-          material = { albedo = { r = 0.7; g = 0.3; b = 0.3 } } }
+          material = { albedo = { r = 0.1; g = 0.2; b = 0.5 } } }
 
     let left =
         { center = { e0 = -1.0; e1 = 0; e2 = -1.0 }
           radius = 0.5
-          material =
-            { albedo = { r = 0.8; g = 0.8; b = 0.8 }
-              fuzz = 0.3 } }
+          material = { eta = 1.5 } }
+
+    let left_hollow =
+        { center = { e0 = -1.0; e1 = 0; e2 = -1.0 }
+          radius = -0.4
+          material = { eta = 1.5 } }
 
     let right =
         { center = { e0 = 1.0; e1 = 0; e2 = -1.0 }
           radius = 0.5
           material =
             { albedo = { r = 0.8; g = 0.6; b = 0.2 }
-              fuzz = 1.0 } }
+              fuzz = 0.0 } }
 
-    let world: object list = [ ground; center; left; right ]
+    let world: object list = [ ground; center; left; left_hollow; right ]
 
     // Render
     let pixels =
