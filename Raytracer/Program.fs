@@ -1,13 +1,12 @@
 ﻿open Raytracer.Vector
 open Raytracer.Ray
 open Raytracer.Sphere
-open Raytracer.Object
 open Raytracer.Camera
 open Raytracer.Material
 
 let R = System.Random()
 
-let random_scene (R: System.Random) : object list =
+let random_scene (R: System.Random) : sphere list =
     let ground =
         { center = { vec3.zero with e1 = -1000.0 }
           radius = 1000
@@ -51,7 +50,7 @@ let random_scene (R: System.Random) : object list =
               fuzz = (R.NextDouble() + 0.001) / 2.0 }
         | _ -> { eta = 1.5 }
 
-    let randoms: object list =
+    let randoms: sphere list =
         List.ofSeq
         <| seq {
             for a in [ -11 .. 10 ] do
