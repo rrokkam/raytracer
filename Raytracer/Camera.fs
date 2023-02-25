@@ -5,15 +5,15 @@ open Raytracer.Ray
 
 let vertical_fov = 20.0 * 2.0 * System.Math.PI / 360.0
 let h = tan <| vertical_fov / 2.0
-let aspect_ratio = 16.0 / 9.0
+let aspect_ratio = 3.0 / 2.0
 let viewport_height = 2.0 * h
 let viewport_width = aspect_ratio * viewport_height
 
-let lookfrom = { e0 = 3.0; e1 = 3.0; e2 = 2.0 }
-let lookat = { vec3.zero with e2 = -1.0 }
+let lookfrom = { e0 = 13.0; e1 = 2.0; e2 = 3.0 }
+let lookat = vec3.zero
 let vup = { vec3.zero with e1 = 1.0 }
-let focus_dist = len <| lookfrom - lookat
-let aperture = 2.0
+let focus_dist = 10.0 // len <| lookfrom - lookat
+let aperture = 0.1
 
 let w = normalize <| lookfrom - lookat
 let u = normalize <| vup ^^ w
