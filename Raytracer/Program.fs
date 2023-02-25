@@ -72,7 +72,7 @@ let random_scene (R: System.Random) : sphere list =
 
 
 let rec ray_color r world max_bounces =
-    match max_bounces, test_many r world 0.001 infinity with
+    match max_bounces, test_many r world 0.001 with
     | bounces, _ when bounces <= 0 -> color.Zero
     | _, Some (ix, mat) ->
         match mat.scatter r ix R with

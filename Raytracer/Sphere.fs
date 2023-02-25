@@ -37,10 +37,10 @@ let test r s =
 let minBy f l =
     if List.isEmpty l then None else Some(l |> List.minBy f)
 
-let test_many r (spheres: sphere list) t_min t_max : (intersect * material) option =
+let test_many r (spheres: sphere list) t_min : (intersect * material) option =
     spheres
     |> List.map (test r)
     |> List.collect id
-    |> List.filter (fun (t, _, _) -> t > t_min && t < t_max)
+    |> List.filter (fun (t, _, _) -> t > t_min)
     |> minBy (fun (t, _, _) -> t)
     |> Option.map (fun (_, ix, mat) -> (ix, mat))
