@@ -19,7 +19,11 @@ type vec3 =
 
     static member (/)(v: vec3, t) = 1.0 / t * v
     static member (~-)(v: vec3) = { e0 = -v.e0; e1 = -v.e1; e2 = -v.e2 }
-    static member (-)(u: vec3, v: vec3) = u + -v
+
+    static member (-)(u: vec3, v: vec3) =
+        { e0 = u.e0 - v.e0
+          e1 = u.e1 - v.e1
+          e2 = u.e2 - v.e2 }
 
     static member (*)(u, v) = u.e0 * v.e0 + u.e1 * v.e1 + u.e2 * v.e2
 
