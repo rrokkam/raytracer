@@ -102,10 +102,10 @@ let main _ =
     // Render
     let pixels =
         seq {
-            for j in [ image_height - 1 .. -1 .. 0 ] do
+            for j in image_height - 1 .. -1 .. 0 do
                 eprintfn $"Lines remaining: {j}"
 
-                for i in [ 0 .. image_width - 1 ] do
+                for i in 0 .. image_width - 1 do
                     [ 1..samples_per_pixel ]
                     |> List.map (fun _ ->
                         let u = (float i + R.NextDouble()) / (float image_width - 1.0)
