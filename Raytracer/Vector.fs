@@ -50,21 +50,23 @@ let NearZero v =
 
 // Passing in System.Random prevents calls to this function from being cached.
 // Without this, this function would only be called once for the life of the program.
-let random_in_unit_sphere (R: System.Random) =
-    Seq.initInfinite (fun _ ->
+let rec random_in_unit_sphere (R: System.Random) =
+    let v =
         { e0 = 2.0 * R.NextDouble() - 1.0
           e1 = 2.0 * R.NextDouble() - 1.0
-          e2 = 2.0 * R.NextDouble() - 1.0 })
-    |> Seq.find (fun v -> len_squared v <= 1)
+          e2 = 0.0 }
+
+    if len_squared v <= 1 then v else random_in_unit_sphere R
 
 let random_on_unit_sphere R = normalize <| random_in_unit_sphere R
 
-let random_in_unit_disk (R: System.Random) =
-    Seq.initInfinite (fun _ ->
+let rec random_in_unit_disk (R: System.Random) =
+    let v =
         { e0 = 2.0 * R.NextDouble() - 1.0
           e1 = 2.0 * R.NextDouble() - 1.0
-          e2 = 0.0 })
-    |> Seq.find (fun v -> len_squared v <= 1)
+          e2 = 0.0 }
+
+    if len_squared v <= 1 then v else random_in_unit_disk R
 
 type point3 = vec3
 
@@ -94,3 +96,8 @@ type color =
             int <| 255.999 * clamp 0.0 0.999 (sqrt v)
 
         $"%i{normalize c.r} %i{normalize c.g} %i{normalize c.b}"
+
+let random_color (R: System.Random) =
+    { r = R.NextDouble()
+      g = R.NextDouble()
+      b = R.NextDouble() }
