@@ -32,7 +32,7 @@ let test r s =
         let t1 = (-half_b - sqrt fourth_discriminant) / a
         let t2 = (-half_b + sqrt fourth_discriminant) / a
 
-        [ (t1, hit_record r s t1, s.material); (t2, hit_record r s t2, s.material) ]
+        [ s, t1; s, t2 ]
 
 let minBy f l =
     if List.isEmpty l then None else Some(l |> List.minBy f)
@@ -41,6 +41,6 @@ let test_many r (spheres: sphere list) t_min : (intersect * material) option =
     spheres
     |> List.map (test r)
     |> List.collect id
-    |> List.filter (fun (t, _, _) -> t > t_min)
-    |> minBy (fun (t, _, _) -> t)
-    |> Option.map (fun (_, ix, mat) -> (ix, mat))
+    |> List.filter (fun (_, t) -> t > t_min)
+    |> minBy snd
+    |> Option.map (fun (s, t) -> hit_record r s t, s.material)
