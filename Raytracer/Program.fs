@@ -99,22 +99,24 @@ let main _ =
     let world = random_scene R
 
     // Render
+    let pixels =
+        seq {
+            for j in image_height - 1 .. -1 .. 0 do
+                eprintfn $"Lines remaining: {j}"
+
+                for i in 0 .. image_width - 1 do
+                    [ 1..samples_per_pixel ]
+                    |> List.map (fun _ ->
+                        let u = (float i + R.NextDouble()) / (float image_width - 1.0)
+                        let v = (float j + R.NextDouble()) / (float image_height - 1.0)
+                        let r = ray_from_camera u v R
+                        ray_color r world max_bounces)
+                    |> List.average
+        }
+
     printfn "P3"
     printfn $"%i{image_width} %i{image_height}"
     printfn "255"
-
-    for j in image_height - 1 .. -1 .. 0 do
-        eprintfn $"Lines remaining: {j}"
-
-        for i in 0 .. image_width - 1 do
-            [ 1..samples_per_pixel ]
-            |> List.map (fun _ ->
-                let u = (float i + R.NextDouble()) / (float image_width - 1.0)
-                let v = (float j + R.NextDouble()) / (float image_height - 1.0)
-                let r = ray_from_camera u v R
-                ray_color r world max_bounces)
-            |> List.average
-            |> string
-            |> fun x -> printfn $"{x}"
-
+    let ppm_body = pixels |> Seq.map string |> String.concat "\n"
+    printfn $"{ppm_body}"
     0
