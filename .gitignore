@@ -1,4 +1,5 @@
 .idea
 Raytracer/bin*
 Raytracer/obj*
+Raytracer_*
 **/*.ppm
