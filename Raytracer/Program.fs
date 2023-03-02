@@ -53,8 +53,8 @@ let random_scene (R: System.Random) : sphere list =
     let randoms: sphere list =
         List.ofSeq
         <| seq {
-            for a in [ -11 .. 10 ] do
-                for b in [ -11 .. 10 ] do
+            for a in [ -1 .. 1 ] do
+                for b in [ -1 .. 1 ] do
                     let center =
                         { e0 = float a + 0.9 * R.NextDouble()
                           e1 = 0.2
@@ -93,8 +93,8 @@ let main _ =
     // Image
     let image_width = 1200
     let image_height = int <| float image_width / aspect_ratio
-    let samples_per_pixel = 500
-    let max_bounces = 50
+    let samples_per_pixel = 100
+    let max_bounces = 10
 
     let world = random_scene R
 
